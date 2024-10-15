@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter Sentiment Analysis</title>
+  </head>
+  <body>
+    <form id="tweet-form">
+      <label for="query">Enter your #Topics</label>
+      <input type="text" id="query" name="query" required />
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+      const form = document.getElementById("tweet-form");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const query = document.getElementById("query").value; // Fix: Use .value
+        const response = await fetch("/analysis", {
+          method: "POST",
+          headers: { "Content-type": "application/x-www-form-urlencoded" }, // Fix: Correct content-type header
+          body: new URLSearchParams({ query }), // Correct form body encoding
+        });
+
+        const result = await response.json(); // Fix: Await the response.json()
+
+        // Clear the result section first
+        let resultHtml = `<h2>The Analysis of the tweet</h2>`;
+        result.forEach((item) => { // Fix: Use 'item' instead of 'element'
+          resultHtml += `<p><strong>Tweet:</strong> ${item.tweet} <br> <strong>Sentiment:</strong> ${item.sentiment}</p>`;
+        });
+
+        document.getElementById("result").innerHTML = resultHtml;
+      });
+    </script>
+  </body>
+</html>
